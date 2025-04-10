@@ -1,8 +1,13 @@
 from mpld3.plugins import PluginBase
+from astropy.wcs import WCS
+from dragon_analysis import DRAGONAnalysis
 
 class CentroidMarker(PluginBase):
     """ An interactive widget to add points to a MatplotLib Image rendered by mpld3. """
     JAVASCRIPT = """
+    const PIXEL_OFFSET_X = 15.7;
+    const PIXEL_OFFSET_Y = -15.7;
+    
     mpld3.register_plugin("centroid_marker", CentroidMarker);
     CentroidMarker.prototype = Object.create(mpld3.Plugin.prototype);
     CentroidMarker.prototype.constructor = CentroidMarker;
@@ -28,8 +33,8 @@ class CentroidMarker(PluginBase):
 
         fig.canvas.on("click", function() {
             var pos = d3.mouse(this);
-            var x = fig.axes[0].x.invert(pos[0]);
-            var y = fig.axes[0].y.invert(pos[1]);
+            var x = fig.axes[0].x.invert(pos[0]) - PIXEL_OFFSET_X;
+            var y = fig.axes[0].y.invert(pos[1]) - PIXEL_OFFSET_Y;
                 
             var newCentroid = fig.canvas.append("circle")
                 .attr("cx", pos[0])
@@ -38,9 +43,9 @@ class CentroidMarker(PluginBase):
                 .style("fill", "red");
                 
             self.circles.push(newCentroid);
-            self.coordinates.push({ x: pos[0], y: pos[1] });
+            self.coordinates.push({ x: x, y: y });
             
-            console.log("Centroid added at:", x, y);
+            console.log("Centroids at" + x + ", " + y);
             // We only want at most 2 centroids
             if (self.circles.length === 2) {
                 window.top.stBridges.send("coordinate_data", self.coordinates);

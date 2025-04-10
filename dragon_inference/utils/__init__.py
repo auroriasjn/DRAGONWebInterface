@@ -1,4 +1,4 @@
-from .utils import *
+from .tensor_utils import *
 from .fits_utils import *
 from .page_utils import *
 from .train_utils import *

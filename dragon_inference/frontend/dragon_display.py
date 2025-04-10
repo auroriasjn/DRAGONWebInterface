@@ -1,18 +1,22 @@
 from hsc_downloader import HSCDownloader
-from dragon_analysis import DRAGONAnalysis
+from dragon_analysis import DRAGONAnalysis, CentroidPoint
 from centroid_marker import CentroidMarker
+from galaxy_inference import GalaxyInference
+from utils import go_to_page, go_back
+from utils import load_fits, implot
 
 from pathlib import Path
+from st_bridge import bridge
+
 import streamlit as st
 import os
+import matplotlib.pyplot as plt
 import pandas as pd
+import astropy.units as u
 
 import mpld3
 import streamlit.components.v1 as components
-from st_bridge import bridge
 
-from utils import go_to_page, go_back
-from utils import load_fits, implot
 
 # Frontend server, effectively served by API requests to the backend (frontend/dragon_display.py)
 class DRAGONDisplay:
@@ -26,16 +30,25 @@ class DRAGONDisplay:
             st.session_state['password'] = ''
         if 'image_location' not in st.session_state:
             st.session_state['image_location'] = os.getcwd()
+        if 'sdss_name' not in st.session_state:
+            st.session_state['sdss_name'] = None
+
         if 'file' not in st.session_state:
             st.session_state['file'] = ''
         if 'classification' not in st.session_state:
             st.session_state['classification'] = None
         if "centroid_coordinates" not in st.session_state:
             st.session_state.centroid_coordinates = []
+        if 'fits' not in st.session_state:
+            st.session_state['fits'] = None
 
         # Button State
         if 'toggle_dragon' not in st.session_state:
             st.session_state['toggle_dragon'] = True
+
+        # Inference State
+        if 'inference_state' not in st.session_state:
+            st.session_state['inference_state'] = 'Centroids'
 
     def display_login_GUI(self):
         with st.form("LoginGUI"):
@@ -72,6 +85,7 @@ class DRAGONDisplay:
         if submitted:
             with st.status("Downloading from HSC..."):
                 file_path = downloader.cutout_query_sdss(sdss_name=sdss_name)
+                st.session_state['sdss_name'] = sdss_name
                 if file_path is not None:
                     st.session_state['file'] = file_path
                     st.write(f"File written to {file_path}...") # TODO: alter functionality
@@ -81,7 +95,15 @@ class DRAGONDisplay:
 
     def _get_hsc_image(self):
         # Final interactive interface
-        header, data = load_fits(file_path=st.session_state['file'], extension=1)
+        if st.session_state['fits'] is None:
+            header, data = load_fits(file_path=st.session_state['file'], extension=1)
+            st.session_state['fits'] = {
+                "header": header,
+                "data": data
+            }
+        else:
+            header, data = st.session_state['fits']['header'], st.session_state['fits']['data']
+
         fig, ax = implot(
             image=data,
             figsize=(st.session_state.fig_size, st.session_state.fig_size),
@@ -94,9 +116,17 @@ class DRAGONDisplay:
 
         return fig, ax
 
-    def _display_hsc_image(self):
-        fig, ax = self._get_hsc_image()
-        st.pyplot(fig)
+    def _init_centroids(self):
+        # Split into the two coordinates and convert!
+        c1, c2 = st.session_state.centroid_coordinates
+        c1, c2 = CentroidPoint(c1), CentroidPoint(c2)
+
+        # This should already be cached, so should take minimal time.
+        header, data = load_fits(file_path=st.session_state['file'], extension=1)
+        c1, c2 = c1.convert_WCS(wcs_header=header), c2.convert_WCS(wcs_header=header)
+
+        return c1, c2
+
 
     def display_image_GUI(self):
         """
@@ -121,7 +151,7 @@ class DRAGONDisplay:
                 "Do you wish to use the DRAGON model for your analysis?",
                 ["Yes.", "No."],
                 captions=[
-                    "This option will use 11 DRAGON Congress Models to analyze your image.",
+                    "This option will use 7 DRAGON Congress Models to analyze your image.",
                     "This option is GalFit-lite: will run an MCMC on your image to determine Sersic fit.",
                 ],
             )
@@ -132,7 +162,12 @@ class DRAGONDisplay:
         if submitted:
             st.session_state['toggle_dragon'] = ( use_dragon == 'Yes.' )
             with st.status("Running DRAGON..."):
+                # This should already be cached, so should take minimal time.
                 header, data = load_fits(file_path=st.session_state['file'], extension=1)
+                st.session_state['fits'] = {
+                    "header": header,
+                    "data": data
+                }
 
                 # Creating a DRAGON predictor object
                 predictor = DRAGONAnalysis(model_dir='models')
@@ -141,7 +176,8 @@ class DRAGONDisplay:
             go_to_page('Inference')
 
         # Display the image itself
-        self._display_hsc_image()
+        fig, ax = self._get_hsc_image()
+        st.pyplot(fig)
 
 
     def _display_centroid_detector(self):
@@ -163,15 +199,24 @@ class DRAGONDisplay:
                  f"is a **{labels[pred_class]}** with {(avg_confidence * 100):.3f}% probability.")
 
         coordinate_data = bridge("coordinate_data", default=[])
+        st.session_state['centroid_coordinates'] = coordinate_data
+
         with st.form("Centroids"):
             if st.session_state.centroid_coordinates:
-                st.write(f"Current centroids: {st.session_state.centroid_coordinates}")
+                c1, c2 = self._init_centroids()
+                st.write(f"Current centroids: {c1}, {c2}")
             else:
                 st.write("Waiting for centroid coordinates...")
 
-            submitted = st.form_submit_button("Finalize Centroids!", icon=None, disabled=False, use_container_width=False)
+            submitted = st.form_submit_button(
+                "Finalize Centroids!", icon=None,
+                disabled=(st.session_state.centroid_coordinates is None),
+                use_container_width=False
+            )
+
             if submitted:
-                go_to_page('Inference')
+                st.session_state['inference_state'] = 'Seps'
+                st.rerun()
 
         fig, ax = self._get_hsc_image()
 
@@ -181,20 +226,111 @@ class DRAGONDisplay:
         fig_html = mpld3.fig_to_html(fig)
         components.html(fig_html, height=1000)
 
-        st.session_state['centroid_coordinates'] = coordinate_data
+    def _plot_spectrum(self, spec):
+        data = spec[1].data
+        wavelength = 10 ** data['loglam']
+        flux = data['flux']
+
+        fig, ax = plt.subplots(figsize=(10, 4))
+        ax.plot(wavelength, flux, lw=0.5)
+        ax.set_xlabel("Wavelength (Å)")
+        ax.set_ylabel("Flux")
+
+        ax.set_title("SDSS Spectrum")
+        ax.grid(True)
+        st.pyplot(fig)
+
+
 
     # Private helper method used in the subsequent method
     def _display_inference_graphs(self):
-        pass
+        # Initialize centroid detection module
+        st.subheader("Inference Results")
+
+        c1, c2 = self._init_centroids()
+        radius1 = st.slider(f'Radius of Centroid 1 at {c1} (Pixels)', min_value=1, max_value=10, value=5, step=1)
+        radius2 = st.slider(f'Radius of Centroid 2 at {c1} (Pixels)', min_value=1, max_value=10, value=5, step=1)
+
+        with st.status("Calculating separations..."):
+            st.write(f"The centroids chosen are at {c1}, {c2}.")
+
+            sep = DRAGONAnalysis.separation(c1, c2)
+            sep = sep.to(u.arcsec)
+
+        with st.status("Calculating magnitudes..."):
+            header0, _ = load_fits(file_path=st.session_state['file'], extension=0)
+            fluxmag_0 = header0['FLUXMAG0']
+
+            header, data = st.session_state['fits']['header'], st.session_state['fits']['data']
+            mag_dict = DRAGONAnalysis.calculate_magnitudes(
+                image=data,
+                center_coords=[c1.extract_point(), c2.extract_point()],
+                radii=[radius1, radius2],
+                fluxmag_0=fluxmag_0
+            )
+
+            # Just for extra measure.
+            st.write(mag_dict)
+
+        with st.status("Attempting to fetch spectrum...") as status:
+            st.write(f"Fetching SDSS name {st.session_state['sdss_name']}...")
+
+            downloader = HSCDownloader(user=st.session_state['user'], password=st.session_state['password'])
+            spectrum = downloader.query_spectrum(st.session_state['sdss_name'])
+
+            if spectrum is None:
+                status.update(
+                    label="No spectrum found in SDSS database...", state="complete", expanded=False
+                )
+            else:
+                status.update(
+                    label="Download complete!", state="complete", expanded=False
+                )
+
+        # Unpacking prediction from DRAGON (again)
+        labels_df = pd.read_csv("frontend/labels.csv", header=None)
+        labels = dict(zip(labels_df[0], labels_df[1]))
+        pred_class, num_voters, total_voters, avg_confidence = st.session_state["classification"].values()
+
+        st.markdown(f"""
+        ### Projected Angular Separation and Magnitude Difference
+
+        - **Angular Separation:** {sep:.3g}
+        - **Magnitude Difference:** {mag_dict['diff']:.4g}  
+        - **Flux Ratio:** {mag_dict['flux_ratio']:.4g}
+        - **Classification**: {labels[pred_class]}, {(avg_confidence * 100):.3f}% probability.
+        """)
+
+        # Display the image itself with added centroid positions.
+        fig, ax = self._get_hsc_image()
+        ax.scatter(c1.x, c1.y, s=15, c='red', marker='x', label=f'Centroid 1 {c1}')
+        ax.scatter(c2.x, c2.y, s=15, c='blue', marker='x', label=f'Centroid 2 {c2}')
+
+        mag_dict['aperture1'].plot(color='white', lw=2, label='Photometry Aperture 1')
+        mag_dict['aperture2'].plot(color='white', lw=2, label='Photometry Aperture 2')
+
+        plt.legend()
+        st.pyplot(fig)
+
+        # Plot spectrum if it exists
+        if not spectrum:
+            return None
+
+        self._plot_spectrum(spectrum)
+
 
     def display_inference_results(self):
         # Honestly, the files downloaded should not be massive.
         # Let's just open it up again.
 
-        self._display_centroid_detector()
+        if st.session_state['inference_state'] == 'Centroids':
+            self._display_centroid_detector()
+        else:
+            self._display_inference_graphs()
+
 
     def display_galaxy_results(self):
         """
         Only to be used if the "galaxy" option is chosen
         """
-        pass
+        galaxy_inf = GalaxyInference()

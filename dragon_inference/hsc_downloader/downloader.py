@@ -14,12 +14,7 @@ class HSCDownloader:
         self.password = password
         self.pwd = pwd
 
-    def cutout_query_sdss(self, sdss_name: str):
-        """
-        :param sdss_name: The desired SDSS name of the galaxy
-        :return: The downloaded image cutout path or None if not found
-        """
-
+    def _query_sdss_name(self, sdss_name: str):
         ra, dec = None, None  # Initialize to None
 
         # Attempt to parse as J2000 coordinates
@@ -51,6 +46,15 @@ class HSCDownloader:
                 raise RuntimeWarning('No valid objects found with the given name.')
                 return None
 
+        return ra, dec
+
+    def cutout_query_sdss(self, sdss_name: str):
+        """
+        :param sdss_name: The desired SDSS name of the galaxy
+        :return: The downloaded image cutout path or None if not found
+        """
+
+        ra, dec = self._query_sdss_name(sdss_name)
         if ra is not None and dec is not None:
             return self._cutout_post(ra=ra, dec=dec, obj_name=sdss_name)
 
@@ -100,5 +104,15 @@ class HSCDownloader:
 
     # Just get the spectrum in SDSS if it exists.
     def query_spectrum(self, sdss_name: str):
+        ra, dec = self._query_sdss_name(sdss_name)
+        position = SkyCoord(ra=ra, dec=dec, unit=(u.deg, u.deg), frame='icrs')
 
-        pass
+        # Query the nearest spectrum
+        xid = SDSS.query_region(position, radius=8 * u.arcsec, spectro=True)
+
+        if xid is None or len(xid) == 0:
+            raise ValueError(f"No spectrum found near {sdss_name} (RA: {ra}, Dec: {dec})")
+
+        # Download and return the first spectrum
+        spectra = SDSS.get_spectra(matches=xid)
+        return spectra[0]
