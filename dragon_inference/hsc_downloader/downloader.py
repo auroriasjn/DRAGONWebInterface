@@ -3,6 +3,7 @@ from pathlib import Path
 from astroquery.sdss import SDSS
 from astropy.coordinates import SkyCoord
 import astropy.units as u
+import logging
 
 
 class HSCDownloader:
@@ -14,39 +15,41 @@ class HSCDownloader:
         self.password = password
         self.pwd = pwd
 
+
     def _query_sdss_name(self, sdss_name: str):
-        ra, dec = None, None  # Initialize to None
-
-        # Attempt to parse as J2000 coordinates
+        # Try resolving the name as an object
         try:
-            pos = SkyCoord(sdss_name, unit=(u.hourangle, u.deg), frame='icrs')
-            res = SDSS.query_region(coordinates=pos, radius=8 * u.arcsec)
-            res = res.to_pandas()
-
-            if res is not None:
-                ra, dec = pos.ra.deg, pos.dec.deg
-        except ValueError:
-            # If the name is not a valid J2000 coordinate, try querying the SDSS database
-            query = f"""
-                SELECT objID, ra, dec 
-                FROM PhotoObj 
-                WHERE objID IN (
-                    SELECT objID FROM SpecObj 
-                    WHERE SDSS17 = '{sdss_name}'
-                )
-                ORDER BY dec DESC
-                LIMIT 1;
-            """
-
+            pos = SkyCoord.from_name(sdss_name)
+        except Exception:
             try:
-                res = self._manual_SQL_query(query=query)
-                if res is not None and not res.empty:
-                    ra, dec = res['ra'].iloc[0], res['dec'].iloc[0]
-            except ValueError:
-                raise RuntimeWarning('No valid objects found with the given name.')
-                return None
+                pos = SkyCoord(sdss_name, unit=(u.hourangle, u.deg), frame='icrs')
+            except Exception:
+                pos = None
 
-        return ra, dec
+        if pos is not None:
+            res = SDSS.query_region(coordinates=pos, radius=8 * u.arcsec)
+            if res is not None:
+                return pos.ra.deg, pos.dec.deg
+
+        # Final fallback: manual SQL query on SDSS name
+        logging.info("Falling back to manual SQL query...")
+        query = f"""
+            SELECT TOP 1 objID, ra, dec 
+            FROM PhotoObj 
+            WHERE objID IN (
+                SELECT objID FROM SpecObj 
+                WHERE SDSS17 = '{sdss_name}'
+            ) OR objID = CAST('{sdss_name}' AS BIGINT)
+            ORDER BY dec DESC
+        """
+        try:
+            res = self._manual_SQL_query(query=query)
+            if res is not None and not res.empty:
+                return res['ra'].iloc[0], res['dec'].iloc[0]
+        except Exception:
+            pass  # Suppress query failure
+
+        raise RuntimeWarning('No valid objects found with the given name or coordinates.')
 
     def cutout_query_sdss(self, sdss_name: str):
         """

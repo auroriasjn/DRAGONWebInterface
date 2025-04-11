@@ -53,6 +53,10 @@ class DRAGONDisplay:
     def display_login_GUI(self):
         with st.form("LoginGUI"):
             st.subheader('Login')
+            st.caption("To facilitate easier downloading, you can input your HSC credentials "
+                       "here. Note that this Streamlit app is on a local instance, so the "
+                       "API request will be secure. This section **requires** an **valid** HSC downloader "
+                       "account to execute properly.")
             user = st.text_input(label="User", value="jen55")
             password = st.text_input(label="Password", value="aF5sI9Rm04C81UCY0X6QfVwdM8cE08eF0bzGgOiF", type="password")
 
@@ -76,7 +80,11 @@ class DRAGONDisplay:
         with st.form('HSCDownloader'):
             st.subheader('SDSS Downloader')
 
-            st.write("Please input the SDSS name of the galaxy candidate (i.e: J141637.44+003352.2)")
+            st.write("Please input the **SDSS name** of the galaxy candidate (i.e: J141637.44+003352.2, or "
+                     "the direct SDSS object id)")
+
+            st.caption("In Moskowitz and Ng et al. (2025), all analyses of candidates were conducted "
+                       "via cross-matching to SDSS, which is why this step is necessary.")
 
             sdss_name = st.text_input(label="SDSS Name", value="J141637.44+003352.2")
             submitted = st.form_submit_button(label="Submit", icon=None, disabled=False, use_container_width=False)
@@ -188,6 +196,12 @@ class DRAGONDisplay:
         # Initialize centroid detection module
         st.subheader("Centroid Detector Module")
 
+        st.caption("A part of Moskowitz and Ng et al. (2025) was an automated centroid analysis "
+                   "via use of the GOTHIC algorithm and a fit to a Moffat2D profile. However, "
+                   "since we are only dealing with one image, a manual selection of centroid "
+                   "points will suffice. Your selected points will be marked in :red[**red**] "
+                   "and will be saved and **automatically disappear** upon selection of _two_ points.")
+
         # Read CSV without a header
         labels_df = pd.read_csv("frontend/labels.csv", header=None)
         labels = dict(zip(labels_df[0], labels_df[1]))
@@ -239,7 +253,6 @@ class DRAGONDisplay:
         ax.set_title("SDSS Spectrum")
         ax.grid(True)
         st.pyplot(fig)
-
 
 
     # Private helper method used in the subsequent method
