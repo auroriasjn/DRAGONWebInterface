@@ -356,7 +356,11 @@ class DRAGONDisplay:
         else:
             self._display_inference_graphs()
 
+    def _plot_contours(self):
+        pass
+
     def _run_mcmc(self, steps, walkers, n, r_eff, i0, theta, ellip):
+        param_names = ["n", "R_e", "I_0", "\\theta", "\\epsilon", "x_0", "y_0"]
         with st.status(f"Initializing Galaxy MCMC with {steps} steps and {walkers} walkers..."):
             galaxy_inference = GalaxyInference(n_steps=steps, n_walkers=walkers)
 
@@ -374,8 +378,34 @@ class DRAGONDisplay:
             galaxy_inference.load_data(image=data)
 
         with st.status("Running MCMC..."):
-            pos, prob, state, sampler, figure = galaxy_inference.fit_radial_light_profile()
-            st.pyplot(figure)
+            pos, prob, state, sampler, corner, inferred_params = galaxy_inference.fit_radial_light_profile()
+
+            # First plot the Corner Plot
+            st.pyplot(corner)
+
+            # Contour map plot!
+            fig, ax = self._get_hsc_image()
+            medians = [inferred_params[name]["median"] for name in param_names]
+
+            model, levels = galaxy_inference.get_contour_levels(medians, n_levels=8)
+            ax.contour(model, levels=levels, colors="white", linewidths=1)
+            st.pyplot(fig)
+
+        st.subheader("Inferred Parameters")
+        st.caption("These are the inferred parameters outputted from the aforementioned MCMC model. A"
+                   " more _comprehensive_ corner plot is visible underneath the status header.")
+
+        # **This segment was ChatGPTed, just to make the formatting nice!**
+        latex_lines = []
+        for name, values in inferred_params.items():
+            med = values["median"]
+            minus = values["minus_1sigma"]
+            plus = values["plus_1sigma"]
+
+            latex_expr = rf"${name} = {med:.4g}^{{+{plus:.4g}}}_{{-{minus:.4g}}}$"
+            latex_lines.append(f"- {latex_expr}")
+
+        st.markdown("\n".join(latex_lines))
 
     def display_galaxy_results(self):
         """

@@ -34,10 +34,10 @@ class DRAGONAnalysis:
         This is an adaptation of Isaac's magnitude calculation code done over the summer
         in conjunction with me!
 
-        :param image:
-        :param center_coords:
-        :param radii:
-        :return:
+        :param image: The downloaded image that contains the sources to analyze.
+        :param center_coords: The locations of the centroids, chosen by the CentroidMarker plugin.
+        :param radii: Guesses for the radii of the galaxies using aperture photometry.
+        :return: A dictionary containing magnitude information and flux separation.
         """
         adu_mag_conv = lambda flux, fluxMag_0: 2.5 * np.log10(fluxMag_0 / flux)
 
@@ -77,6 +77,16 @@ class DRAGONAnalysis:
 
     @staticmethod
     def angular_separation(ra1, dec1, ra2, dec2):
+        """
+        Helper method to calculate angular separations. Assumes
+        that inputted coordinates are in *degrees*.
+
+        :param ra1: The Right Ascension of object 1.
+        :param dec1: The Declination of object 1.
+        :param ra2: The Right Ascension of the second source.
+        :param dec2: The declination of the second source.
+        :return: The angular separation of the two sources, in degrees.
+        """
         ra1 = np.radians(ra1)
         dec1 = np.radians(dec1)
         ra2 = np.radians(ra2)

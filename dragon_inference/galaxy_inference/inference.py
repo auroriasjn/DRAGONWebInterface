@@ -137,6 +137,19 @@ class GalaxyInference:
 
         return pos, prob, state, sampler
 
+    def get_contour_levels(self, params, n_levels=8):
+        """
+        Helper method to get the contour plots.
+        """
+        model = self._curve_model(params)
+
+        # Plot the levels
+        levels = np.linspace(np.percentile(model, 5),
+                             np.percentile(model, 95),
+                             n_levels)
+
+        return model, levels
+
     def fit_radial_light_profile(self):
         """
         This method actually runs inference to determine
@@ -158,4 +171,16 @@ class GalaxyInference:
             title_kwargs={"fontsize": 12}
         )
 
-        return pos, prob, state, sampler, figure
+        param_names = ["n", "R_e", "I_0", "\\theta", "\\epsilon", "x_0", "y_0"]
+        inferred_params = {}
+
+        # Getting corner plot outputs in the form of a dictionary.
+        for i, name in enumerate(param_names):
+            q16, q50, q84 = np.percentile(flat_samples[:, i], [16, 50, 84])
+            inferred_params[name] = {
+                "median": q50,
+                "minus_1sigma": q50 - q16,
+                "plus_1sigma": q84 - q50
+            }
+
+        return pos, prob, state, sampler, figure, inferred_params
