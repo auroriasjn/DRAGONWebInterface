@@ -106,7 +106,7 @@ class DRAGONDisplay:
                 else:
                     file_path = downloader.cutout_query_coord(ra=ra, dec=dec)
 
-                st.session_state['sdss_name'] = sdss_name if ra is None else f"({ra}, {dec})"
+                st.session_state['sdss_name'] = sdss_name if not len(ra) else f"({ra}, {dec})"
                 if file_path is not None:
                     st.session_state['file'] = file_path
                     st.write(f"File written to {file_path}...") # TODO: alter functionality
@@ -243,7 +243,7 @@ class DRAGONDisplay:
                 use_container_width=False
             )
 
-            if submitted:
+            if submitted and len(st.session_state.centroid_coordinates) == 2:
                 st.session_state['inference_state'] = 'Seps'
                 st.rerun()
 
@@ -410,7 +410,9 @@ class DRAGONDisplay:
             with col4:
                 theta = st.number_input("Angle ($\\theta$)", min_value=0., max_value=360., step=0.5, key="theta")
             with col5:
-                ellipticity = st.number_input("Ellipticity ($\\epsilon$)", min_value=0., max_value=1., value=0.5, step=0.01, key="ellip")
+                ellipticity = st.number_input(
+                    "Ellipticity ($\\epsilon$)", min_value=0., max_value=1., value=0.5, step=0.01, key="ellip"
+                )
 
             submitted = st.form_submit_button(label="Submit")
 

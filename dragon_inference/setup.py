@@ -5,7 +5,8 @@ setuptools.setup(
     version="0.1",
     author="Jeremy Ng",
     author_email="jeremy.ng@yale.edu",
-    description="(TODO) Dragon Inference Package",
+    description="The DRAGON Inference provides a Streamlit app that"
+                " runs CNN analysis based on our custom algorithm.",
     python_requires=">=3.0",
-    packages=["dragon_inference"]
+    packages=setuptools.find_packages(),
 )
