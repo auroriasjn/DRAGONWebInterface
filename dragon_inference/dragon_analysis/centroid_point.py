@@ -2,6 +2,12 @@ from astropy.wcs import WCS
 
 class CentroidPoint:
     def __init__(self, point_dict):
+        """
+        This class primarily serves as a wrapper
+        for a Point object that is used by the
+        CentroidPoint marker for convenience.
+        :param point_dict: A dictionary containing a point in (x, y) format.
+        """
         if 'x' not in point_dict or 'y' not in point_dict:
             raise RuntimeError("Invalid Point Dictionary specified.")
 
@@ -24,12 +30,18 @@ class CentroidPoint:
 
     # Only extracting Cartesian
     def extract_point(self):
+        """
+        Convenience method for extracting a point
+        as a tuple.
+        :return: The centroid point in tuple format (x, y).
+        """
         return (self.x, self.y)
 
 
     def convert_WCS(self, wcs_header):
         """
         Convenience method to help with conversion to WCS.
+        :param wcs_header: The header object of the loaded fits file.
         """
         if not (w := WCS(wcs_header)): # I decided to use a walrus statement because why not?
             raise RuntimeError("Invalid WCS header provided")

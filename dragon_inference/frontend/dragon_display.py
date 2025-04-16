@@ -87,13 +87,26 @@ class DRAGONDisplay:
                        "via cross-matching to SDSS, which is why this step is necessary.")
 
             sdss_name = st.text_input(label="SDSS Name", value="J141637.44+003352.2")
+
+            st.caption("Alternatively, specify RA and DEC here in ICRS (Degree) format. :red[This will override the SDSS name.]")
+            col1, col2 = st.columns(2)
+            with col1:
+                ra = st.text_input(label="Right Ascension (RA)")
+            with col2:
+                dec = st.text_input(label="Declination (Dec)")
+
             submitted = st.form_submit_button(label="Submit", icon=None, disabled=False, use_container_width=False)
+
 
         # Only after the form are we allowed to do this.
         if submitted:
             with st.status("Downloading from HSC..."):
-                file_path = downloader.cutout_query_sdss(sdss_name=sdss_name)
-                st.session_state['sdss_name'] = sdss_name
+                if ra is None and dec is None or not len(ra) or not len(dec):
+                    file_path = downloader.cutout_query_sdss(sdss_name=sdss_name)
+                else:
+                    file_path = downloader.cutout_query_coord(ra=ra, dec=dec)
+
+                st.session_state['sdss_name'] = sdss_name if ra is None else f"({ra}, {dec})"
                 if file_path is not None:
                     st.session_state['file'] = file_path
                     st.write(f"File written to {file_path}...") # TODO: alter functionality
@@ -169,17 +182,19 @@ class DRAGONDisplay:
         # Upon submission
         if submitted:
             st.session_state['toggle_dragon'] = ( use_dragon == 'Yes.' )
-            with st.status("Running DRAGON..."):
-                # This should already be cached, so should take minimal time.
-                header, data = load_fits(file_path=st.session_state['file'], extension=1)
-                st.session_state['fits'] = {
-                    "header": header,
-                    "data": data
-                }
 
-                # Creating a DRAGON predictor object
-                predictor = DRAGONAnalysis(model_dir='models')
-                st.session_state['classification'] = predictor.run(image=data)
+            # This should already be cached, so should take minimal time.
+            header, data = load_fits(file_path=st.session_state['file'], extension=1)
+            st.session_state['fits'] = {
+                "header": header,
+                "data": data
+            }
+
+            if st.session_state['toggle_dragon']:
+                with st.status("Running DRAGON..."):
+                    # Creating a DRAGON predictor object
+                    predictor = DRAGONAnalysis(model_dir='models')
+                    st.session_state['classification'] = predictor.run(image=data)
 
             go_to_page('Inference')
 
@@ -341,9 +356,80 @@ class DRAGONDisplay:
         else:
             self._display_inference_graphs()
 
+    def _run_mcmc(self, steps, walkers, n, r_eff, i0, theta, ellip):
+        with st.status(f"Initializing Galaxy MCMC with {steps} steps and {walkers} walkers..."):
+            galaxy_inference = GalaxyInference(n_steps=steps, n_walkers=walkers)
+
+        with st.status("Standardizing initial guesses..."):
+            galaxy_inference.init_params(
+                n=n,
+                r_eff=r_eff,
+                i0=i0,
+                theta=theta,
+                ellip=ellip
+            )
+
+        with st.status("Loading image..."):
+            header, data = st.session_state['fits']['header'], st.session_state['fits']['data']
+            galaxy_inference.load_data(image=data)
+
+        with st.status("Running MCMC..."):
+            pos, prob, state, sampler, figure = galaxy_inference.fit_radial_light_profile()
+            st.pyplot(figure)
 
     def display_galaxy_results(self):
         """
-        Only to be used if the "galaxy" option is chosen
+        Only to be used if the "galaxy" option is chosen.
         """
-        galaxy_inf = GalaxyInference()
+        st.subheader("Galaxy Inference Results")
+
+        with st.form("Parameters"):
+            st.subheader("MCMC Configuration")
+
+            col1, col2 = st.columns(2)
+            with col1:
+                steps = st.slider("Step Count for MCMC", min_value=100, max_value=1000000, value=1000, step=100)
+            with col2:
+                walkers = st.slider("Walker Count for MCMC", min_value=20, max_value=1000, value=20, step=10)
+
+            st.caption("Provide initial guesses for your parameters for the Sersic model. "
+                       "Recall that the model fitted will be of the form:")
+            st.latex(r'''
+                I(R) = I_0 \exp\left\{-b_n \left[\left(\frac{R}{R_e}\right)^{1/n} - 1\right]\right\}
+            ''')
+
+            st.markdown("### Initial Parameter Guesses")
+
+            col1, col2, col3, col4, col5 = st.columns(5)
+            with col1:
+                sersic_guess = st.number_input("Sersic ($n$)", key="sersic", min_value=1., max_value=4., step=0.01)
+            with col2:
+                r_eff = st.number_input("Half-Light ($R_e$)", key="reff", min_value=0., value=5., step=0.1)
+            with col3:
+                i0 = st.number_input("Intensity ($I_0$)", key="i0", min_value=0., value=8.0, step=0.1)
+            with col4:
+                theta = st.number_input("Angle ($\\theta$)", min_value=0., max_value=360., step=0.5, key="theta")
+            with col5:
+                ellipticity = st.number_input("Ellipticity ($\\epsilon$)", min_value=0., max_value=1., value=0.5, step=0.01, key="ellip")
+
+            submitted = st.form_submit_button(label="Submit")
+
+        if submitted:
+            self._run_mcmc(
+                steps=int(steps),
+                walkers=int(walkers),
+                n=sersic_guess,
+                r_eff=r_eff,
+                i0=i0,
+                theta=theta,
+                ellip=ellipticity
+            )
+
+
+        fig, ax = self._get_hsc_image()
+        st.pyplot(fig)
+
+
+
+
+

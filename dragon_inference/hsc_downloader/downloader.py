@@ -51,6 +51,11 @@ class HSCDownloader:
 
         raise RuntimeWarning('No valid objects found with the given name or coordinates.')
 
+    def _query_ra_dec(self, ra: float, dec: float):
+        pos = SkyCoord(ra=ra, dec=dec, unit=(u.deg, u.deg), frame='icrs')
+
+        return pos.ra.deg, pos.dec.deg
+
     def cutout_query_sdss(self, sdss_name: str):
         """
         :param sdss_name: The desired SDSS name of the galaxy
@@ -62,6 +67,16 @@ class HSCDownloader:
             return self._cutout_post(ra=ra, dec=dec, obj_name=sdss_name)
 
         return None  # If everything fails, return None
+
+    def cutout_query_coord(self, ra: float, dec: float):
+        """
+        :param ra: The provided Right Ascension of the object
+        :param dec: The provided Declination of the object
+        :return: The downloaded image cutout path or None if not found
+        """
+
+        ra, dec = self._query_ra_dec(ra=ra, dec=dec)
+        return self._cutout_post(ra=ra, dec=dec, obj_name=f"({ra}, {dec})")
 
     def _cutout_post(self, ra: float, dec: float, obj_name: str = "default") -> Path:
         s = requests.Session()
@@ -87,7 +102,8 @@ class HSCDownloader:
             return filename
 
         response = s.get(base_url, params=params, auth=s.auth, stream=True, timeout=30)
-        response.raise_for_status()
+        if response.raise_for_status() is not None:
+            raise RuntimeError("No file found with the given parameters.")
 
         with filename.open('wb') as file:
             for chunk in response.iter_content(chunk_size=8192):

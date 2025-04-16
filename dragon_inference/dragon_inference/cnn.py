@@ -80,6 +80,11 @@ class DRAGON(nn.Module):
         self.fc2 = nn.Linear(1024, num_classes)
 
     def forward(self, x):
+        """
+        This method runs the forward pass of the DRAGON CNN model.
+        :param x: the input data.
+        :return: a seven-wide one-hot encoded layer of probabilities.
+        """
         # Forward pass through the layers
         out = self.layer1(x)
         out = self.layer2(out)

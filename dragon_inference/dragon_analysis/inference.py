@@ -10,7 +10,11 @@ class DRAGONAnalysis:
     def __init__(self, model_dir='models'):
         """
         Interface to run DRAGON.
+        :param model_dir: The *relative location* of the working directory.
+        Can also be specified as an absolute path. Must be string delimited/
+        a valid path.
         """
+
         logging.info("Initializing DRAGON models...")
         self.ensemble = DRAGONEnsemble(model_dir=model_dir)
 

@@ -2,3 +2,4 @@
 build
 dragon_inference.egg-info
 .idea
+*.fits

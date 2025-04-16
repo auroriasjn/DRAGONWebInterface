@@ -2,9 +2,16 @@ import streamlit as st
 from dragon_display import DRAGONDisplay
 from utils import go_back, go_to_page
 import logging
+from multiprocessing import set_start_method
 
 import os
 import torch
+
+# Ensure the multiprocessing method is properly set for Jupyter
+try:
+    set_start_method("fork", force=True)  # "fork" works best on Unix-like systems
+except RuntimeError:
+    pass  # If already set, ignore the error
 
 # Required to allow PyTorch to work with Streamlit.
 torch.classes.__path__ = [os.path.join(torch.__path__[0], torch.classes.__file__)]
