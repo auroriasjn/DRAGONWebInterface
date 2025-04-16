@@ -37,6 +37,10 @@ class GalaxyInference:
         self.x0, self.y0 = sz // 2, sz // 2
 
     def load_data(self, image):
+        """
+        Simple setter method to load data into the MCMC pipeline.
+        :param image: a numpy.ndarray that contains the image data.
+        """
         logging.info("Data loaded...")
         self.data = image
 
@@ -134,6 +138,13 @@ class GalaxyInference:
         return pos, prob, state, sampler
 
     def fit_radial_light_profile(self):
+        """
+        This method actually runs inference to determine
+        a galaxy's radial light profile in terms of its
+        Sersic index (following a generalized Sersic law).
+        :return: The final working state of the MCMC model, and a
+        corner plot that represents its results (pos, prob, state, sample, figure).
+        """
         logging.info("Beginning fitting...")
         pos, prob, state, sampler = self._run_mcmc()
 
