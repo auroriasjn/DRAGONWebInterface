@@ -5,3 +5,5 @@ dragon_inference.egg-info
 *.fits
 .idea
 skeleton.py
+
+*/__pycache__
