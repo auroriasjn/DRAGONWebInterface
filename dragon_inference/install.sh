@@ -8,8 +8,11 @@ if ! command -v conda &>/dev/null; then
 fi
 
 conda create -n "DRAGONInference" python=3.12
+echo "Conda Environment created..."
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate DRAGONInference
+
+echo "New Conda Environment activated..."
 pip install -r requirements.txt
 pip install .
