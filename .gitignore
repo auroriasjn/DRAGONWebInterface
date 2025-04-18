@@ -6,6 +6,8 @@ dragon_inference.egg-info
 .idea
 skeleton.py
 
+*.pyc
+
 # Removing all __pycache__
 dragon_inference/dragon_analysis/__pycache__
 dragon_inference/dragon_inference/__pycache__
