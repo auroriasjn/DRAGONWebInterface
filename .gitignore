@@ -6,6 +6,9 @@ dragon_inference.egg-info
 .idea
 skeleton.py
 
-dragon_analysis/__pycache__/
+dragon_analysis/__pycache__
+dragon_inference/__pycache__
 utils/__pycache__
 galaxy_inference/__pycache__
+frontend/__pycache__
+hsc_downloader/__pycache__
