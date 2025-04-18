@@ -19,7 +19,9 @@ Make sure that you have **Anaconda** installed. There are two files located in t
 ```angular2html
 ./install.sh && ./run.sh
 ```
-This will open up a Streamlit, probably on localhost:8501.
+This will open up a *localized Streamlit App*, probably on https://localhost:8501. Please check the terminal for the location of the hosted website. 
+
+Do note that startup for the website will take a decent amount of time (on the order of 1 minute).
 
 # Getting Help
 
