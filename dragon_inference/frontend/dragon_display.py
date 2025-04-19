@@ -10,6 +10,7 @@ from st_bridge import bridge
 
 import streamlit as st
 import os
+import io
 import matplotlib.pyplot as plt
 import pandas as pd
 import astropy.units as u
@@ -255,7 +256,11 @@ class DRAGONDisplay:
         fig_html = mpld3.fig_to_html(fig)
         components.html(fig_html, height=1000)
 
-    def _plot_spectrum(self, spec):
+    def _plot_spectrum(self, spectrum):
+        # We just want the first part.
+        spec = spectrum[0]
+
+        # And then to extract from there...
         data = spec[1].data
         wavelength = 10 ** data['loglam']
         flux = data['flux']
@@ -269,6 +274,32 @@ class DRAGONDisplay:
         ax.grid(True)
         st.pyplot(fig)
 
+    def _download_spectrum_button(self, spectrum):
+        downloader = HSCDownloader(user=st.session_state['user'], password=st.session_state['password'])
+
+        # Only downloading the first spectrum
+        buf = downloader.download_spectrum(spectrum[0])
+        st.download_button(
+            label="Download Spectrum",
+            data=buf,
+            file_name=f"{st.session_state['sdss_name']}_spec.fits",
+            mime="application/fits",
+            icon=":material/download:"
+        )
+
+    def _download_magnitude_image(self, fig, ax):
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', dpi=150, bbox_inches='tight')
+        buf.seek(0)
+
+        st.download_button(
+            label="Download Apertures",
+            data=buf,
+            file_name=f"{st.session_state['sdss_name']}_centroids.png",
+            mime="image/png",
+            icon=":material/download:"
+        )
+
 
     # Private helper method used in the subsequent method
     def _display_inference_graphs(self):
@@ -276,8 +307,10 @@ class DRAGONDisplay:
         st.subheader("Inference Results")
 
         c1, c2 = self._init_centroids()
-        radius1 = st.slider(f'Radius of Centroid 1 at {c1} (Pixels)', min_value=1, max_value=10, value=5, step=1)
-        radius2 = st.slider(f'Radius of Centroid 2 at {c1} (Pixels)', min_value=1, max_value=10, value=5, step=1)
+
+        with st.sidebar:
+            radius1 = st.slider(f'Radius of Centroid 1 at {c1} (Pixels)', min_value=1, max_value=10, value=5, step=1)
+            radius2 = st.slider(f'Radius of Centroid 2 at {c1} (Pixels)', min_value=1, max_value=10, value=5, step=1)
 
         with st.status("Calculating separations..."):
             st.write(f"The centroids chosen are at {c1}, {c2}.")
@@ -346,6 +379,11 @@ class DRAGONDisplay:
 
         self._plot_spectrum(spectrum)
 
+        # Further sidebar shenanigans
+        with st.sidebar:
+            self._download_spectrum_button(spectrum)
+            self._download_magnitude_image(fig, ax)
+
 
     def display_inference_results(self):
         # Honestly, the files downloaded should not be massive.
@@ -356,8 +394,6 @@ class DRAGONDisplay:
         else:
             self._display_inference_graphs()
 
-    def _plot_contours(self):
-        pass
 
     def _run_mcmc(self, steps, walkers, n, r_eff, i0, theta, ellip):
         param_names = ["n", "R_e", "I_0", "\\theta", "\\epsilon", "x_0", "y_0"]

@@ -2,6 +2,8 @@ import requests
 from pathlib import Path
 from astroquery.sdss import SDSS
 from astropy.coordinates import SkyCoord
+from astropy.io import fits
+import io
 import astropy.units as u
 import logging
 
@@ -123,6 +125,9 @@ class HSCDownloader:
 
     # Just get the spectrum in SDSS if it exists.
     def query_spectrum(self, sdss_name: str):
+        """
+        Convenience method for querying a spectrum from SDSS.
+        """
         ra, dec = self._query_sdss_name(sdss_name)
         position = SkyCoord(ra=ra, dec=dec, unit=(u.deg, u.deg), frame='icrs')
 
@@ -132,6 +137,15 @@ class HSCDownloader:
         if xid is None or len(xid) == 0:
             raise ValueError(f"No spectrum found near {sdss_name} (RA: {ra}, Dec: {dec})")
 
-        # Download and return the first spectrum
+        # Get the first spectrum
         spectra = SDSS.get_spectra(matches=xid)
-        return spectra[0]
+        return spectra
+
+    def download_spectrum(self, spectrum):
+        """
+        Convenience method for downloading a spectrum from SDSS.
+        """
+        buf = io.BytesIO()
+        spectrum.writeto(buf)  # write the full HDUList, headers and all
+        buf.seek(0)
+        return buf
