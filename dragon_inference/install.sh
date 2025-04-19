@@ -15,4 +15,8 @@ conda activate DRAGONInference
 
 echo "New Conda Environment activated..."
 pip install -r requirements.txt
+
+echo "Installing DRAGON..."
 pip install .
+
+echo "DRAGON Installed!"
