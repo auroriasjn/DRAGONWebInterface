@@ -256,11 +256,8 @@ class DRAGONDisplay:
         fig_html = mpld3.fig_to_html(fig)
         components.html(fig_html, height=1000)
 
-    def _plot_spectrum(self, spectrum):
-        # We just want the first part.
-        spec = spectrum[0]
-
-        # And then to extract from there...
+    def _plot_spectrum(self, spec):
+        # We just want the first part. And then to extract from there...
         data = spec[1].data
         wavelength = 10 ** data['loglam']
         flux = data['flux']
@@ -307,7 +304,6 @@ class DRAGONDisplay:
         st.subheader("Inference Results")
 
         c1, c2 = self._init_centroids()
-
         with st.sidebar:
             radius1 = st.slider(f'Radius of Centroid 1 at {c1} (Pixels)', min_value=1, max_value=10, value=5, step=1)
             radius2 = st.slider(f'Radius of Centroid 2 at {c1} (Pixels)', min_value=1, max_value=10, value=5, step=1)
@@ -377,7 +373,7 @@ class DRAGONDisplay:
         if not spectrum:
             return None
 
-        self._plot_spectrum(spectrum)
+        self._plot_spectrum(spectrum[0])
 
         # Further sidebar shenanigans
         with st.sidebar:
