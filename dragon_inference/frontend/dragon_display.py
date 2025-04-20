@@ -23,8 +23,11 @@ import streamlit.components.v1 as components
 class DRAGONDisplay:
     def __init__(self):
         """
-        Primary web application hub for the Streamlit API
+        Primary web application hub for the Streamlit API.
+        We should not have to call this by ourselves, so
+        the documentation for this class will be a bit more sparse.
         """
+
         if 'user' not in st.session_state:
             st.session_state['user'] = ''
         if 'password' not in st.session_state:
@@ -52,6 +55,11 @@ class DRAGONDisplay:
             st.session_state['inference_state'] = 'Centroids'
 
     def display_login_GUI(self):
+        """
+        This function initializes the "Login GUI" page of the Streamlit app.
+        This page allows the user to login to the HSC PDR3 data access page.
+        """
+
         with st.form("LoginGUI"):
             st.subheader('Login')
             st.caption("To facilitate easier downloading, you can input your HSC credentials "
@@ -71,7 +79,7 @@ class DRAGONDisplay:
 
     def display_cutout_GUI(self):
         """
-        For initial image display of the cutout GUI.
+        This function creates the initial image display of the cutout GUI.
         """
 
         # Initializing the downloader

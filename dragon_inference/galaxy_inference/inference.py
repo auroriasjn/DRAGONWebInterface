@@ -11,7 +11,11 @@ from multiprocessing import Pool
 class GalaxyInference:
     def __init__(self, n_steps, n_walkers):
         """
-        Initialize the GalaxyInference class.
+        Initialize the GalaxyInference class, that aids with MCMC
+        inference (for a Sersic light profile) for a given 8x8 arcsecond
+        patch of the sky. Accessing this class via the interface is only
+        by specific choice.
+
         :param n_steps: Number of production steps in the MCMC chain.
         :param n_walkers: Number of walkers in the ensemble.
         """
@@ -26,7 +30,17 @@ class GalaxyInference:
                     theta: int,
                     ellip: float,
                     sz: int = 94):
-        # Initializing parameters for MCMC
+        """
+        Initializing the parameters for the MCMC inference
+        for a Sersic light profile.
+
+        :param n: Initial guess for predicted Sersic index.
+        :param r_eff: Initial guess for effective half-light radius.
+        :param i0: Initial guess for the initial intensity of the galaxy.
+        :param ellip: Initial guess for the ellipticity (ratio of major to minor axes) of the galaxy.
+        :param sz: Inputted size of the image.
+        """
+
         self.n = n
         self.r_eff = r_eff
         self.i0 = i0
@@ -140,6 +154,8 @@ class GalaxyInference:
     def get_contour_levels(self, params, n_levels=8):
         """
         Helper method to get the contour plots.
+        :return: the contour plots in the form of a (model function, plotted levels)
+        tuple.
         """
         model = self._curve_model(params)
 
@@ -155,6 +171,7 @@ class GalaxyInference:
         This method actually runs inference to determine
         a galaxy's radial light profile in terms of its
         Sersic index (following a generalized Sersic law).
+
         :return: The final working state of the MCMC model, and a
         corner plot that represents its results (pos, prob, state, sample, figure).
         """

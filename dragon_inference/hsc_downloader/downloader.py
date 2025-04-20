@@ -12,6 +12,11 @@ class HSCDownloader:
     def __init__(self, user: str, password: str, pwd: Path = Path.cwd()):
         """
         This class handles requests and queries to the HSC telescope database.
+
+        :param user: The username (for login to HSC).
+        :param password: Password (for login to HSC). Since this is a localized
+        instance, we don't worry about security in this case.
+        :param pwd: The directory in which we want all files to be downloaded.
         """
         self.user = user
         self.password = password
@@ -60,6 +65,9 @@ class HSCDownloader:
 
     def cutout_query_sdss(self, sdss_name: str):
         """
+        Downloads an 8x8 arcsecond image of a patch of the sky in HSC
+        using the SDSS naming convention of the image.
+
         :param sdss_name: The desired SDSS name of the galaxy
         :return: The downloaded image cutout path or None if not found
         """
@@ -72,6 +80,9 @@ class HSCDownloader:
 
     def cutout_query_coord(self, ra: float, dec: float):
         """
+        Downloads an 8x8 arcsecond image of a patch of the sky in HSC
+        using the *coordinates* of the image.
+
         :param ra: The provided Right Ascension of the object
         :param dec: The provided Declination of the object
         :return: The downloaded image cutout path or None if not found
@@ -81,6 +92,9 @@ class HSCDownloader:
         return self._cutout_post(ra=ra, dec=dec, obj_name=f"({ra}, {dec})")
 
     def _cutout_post(self, ra: float, dec: float, obj_name: str = "default") -> Path:
+        """
+        Private method for sending the cutout request to HSC without using their API.
+        """
         s = requests.Session()
         s.auth = (self.user, self.password)
 
