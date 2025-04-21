@@ -12,11 +12,7 @@
 #
 import os
 import sys
-
-sys.path.insert(0, os.path.abspath('../../.'))
-
 from unittest import mock
-import sys
 
 MOCK_MODULES = [
     'numpy',
@@ -48,6 +44,8 @@ MOCK_MODULES = [
 
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
+
+sys.path.insert(0, os.path.abspath('../../.'))
 
 from sphinxawesome_theme.postprocess import Icons
 
