@@ -1,3 +1,8 @@
+[![Documentation Status](https://readthedocs.org/projects/gampen/badge/?version=latest)](https://gampen.readthedocs.io/en/latest/?badge=latest)
+[![Python Version 3.12](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/downloads/)
+[![GitHub license](https://img.shields.io/github/license/auroriasjn/DRAGONWebInterface)](https://github.com/auroriasjn/DRAGONWebInterface/blob/master/LICENSE)
+[![image](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 # DRAGON Web Interface
 This repository serves as a convenient **web interface** for use in preliminary analysis of DRAGON candidates. For details on the model, please go to the [DRAGON_CNN](https://github.com/iam37/DRAGON_CNN/tree/main) repository. 
 

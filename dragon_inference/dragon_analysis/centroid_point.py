@@ -5,7 +5,10 @@ class CentroidPoint:
         """
         This class primarily serves as a wrapper
         for a Point object that is used by the
-        CentroidPoint marker for convenience.
+        CentroidPoint marker for convenience. You should
+        not have to use this class, but it could serve as a relatively
+        nice converter from pixel to world.
+
         :param point_dict: A dictionary containing a point in (x, y) format.
         """
         if 'x' not in point_dict or 'y' not in point_dict:

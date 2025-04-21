@@ -50,7 +50,7 @@ class GalaxyInference:
         # Assume that the initial guess for the center is right at the center of the image
         self.x0, self.y0 = sz // 2, sz // 2
 
-    def load_data(self, image):
+    def load_data(self, image: np.ndarray):
         """
         Simple setter method to load data into the MCMC pipeline.
         :param image: a numpy.ndarray that contains the image data.
@@ -59,6 +59,13 @@ class GalaxyInference:
         self.data = image
 
     def _curve_model(self, params):
+        """
+        Convenience (private) method for initializing
+        a Sersic model with the parameters: Sersic index,
+        effective half-light radius, isophotal intensity,
+        ellipticity, and the location of the centroid separated
+        to x0, y0.
+        """
         logging.debug("New model instantiated!")
         n, r_eff, i0, theta, ellip, x0, y0 = params
 

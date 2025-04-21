@@ -23,8 +23,10 @@ import streamlit.components.v1 as components
 class DRAGONDisplay:
     def __init__(self):
         """
-        Primary web application hub for the Streamlit API.
-        We should not have to call this by ourselves, so
+        This class serves as the primary web application hub for the Streamlit API.
+        This class should not work independently from the rest of the module and there
+        is no individualized use case for any of these methods (unless you would like
+        to construct your own customized Streamlit page). As such, the
         the documentation for this class will be a bit more sparse.
         """
 

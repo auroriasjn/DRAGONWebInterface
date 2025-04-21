@@ -9,7 +9,9 @@ class DRAGONEnsemble:
     def __init__(self, model_dir):
         """
         This is a helper class that helps to initialize our hard voting
-        ensemble of DRAGON models by only specifying the model directory.
+        ensemble of DRAGON models by only specifying the model directory. This
+        can serve as an independent wrapper, in fact, to any ensemble of models
+        that output a discrete number of categories for their final product.
 
         :param model_dir: A string representing a directory which should contain
         .pt files of all of the DRAGON models the client wishes to use to make
@@ -35,7 +37,10 @@ class DRAGONEnsemble:
         Outside of the funny naming convention, running the election
         is equivalent to a hard voting system. We adapted this from
         classical machine learning theory and applied it to have
-        a stronger confidence bound on our dual AGN candidates.
+        a stronger confidence bound on our dual AGN candidates. Assuming an
+        odd number of classes, this method will output the first highest
+        and second highest most outputted classes for a given model
+        and give a weighted confidence.
 
         :param image: a NumPy ndarray that contains the image data
         of the FITS file previously downloaded.
