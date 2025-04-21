@@ -1,4 +1,4 @@
 sphinx
 sphinxawesome-theme
 myst_nb
-../.
+../../dragon_inference
