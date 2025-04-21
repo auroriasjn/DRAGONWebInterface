@@ -4,5 +4,3 @@ myst_nb
 sphinx.ext.autodoc
 sphinx.ext.duration
 sphinx.ext.viewcode
-sphinx.ext.autosummary
-sphinx.ext.autosectionlabel
