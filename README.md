@@ -1,4 +1,4 @@
-[![Documentation Status](https://readthedocs.org/projects/gampen/badge/?version=latest)](https://gampen.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/dragonwebinterface/badge/?version=latest)](https://dragonwebinterface.readthedocs.io/en/latest/)
 [![Python Version 3.12](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/downloads/)
 [![GitHub license](https://img.shields.io/github/license/auroriasjn/DRAGONWebInterface)](https://github.com/auroriasjn/DRAGONWebInterface/blob/master/LICENSE)
 [![image](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -27,7 +27,7 @@ Make sure that you have **Anaconda** installed. There are two files located in t
 This will open up a *localized Streamlit App*, probably on https://localhost:8501. Please check the terminal for the location of the hosted website. This will also create
 an entirely new Anaconda environment for you called ```DRAGONInference```.
 
-Do note that startup for the website will take a decent amount of time (on the order of 1 minute).
+Do note that startup for the website will take a decent amount of time (on the order of 1 minute). More comprehensive documentation can be found [here](https://dragonwebinterface.readthedocs.io/en/latest/).
 
 # Getting Help
 
