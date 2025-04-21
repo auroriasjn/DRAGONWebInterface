@@ -39,7 +39,8 @@ MOCK_MODULES = [
     'streamlit_bridge',  # corrected: '-' → '_'
     'torch',
     'torchvision',
-    'tqdm'
+    'tqdm',
+    'requests'
 ]
 
 for mod_name in MOCK_MODULES:
