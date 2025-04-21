@@ -51,11 +51,11 @@ to use our Congress Ensemble Package, you can use the following convenience moet
    # Extract predictions.
    preds = ensemble.run_election(image=data)
 
-
 The :file:`DRAGONModel` class is used for initialization of the DRAGON models, yes; however, it can also dual function
 as a general purpose PyTorch CNN wrapper, assuming that the outputs are in the form of a **labeled softmax one-hot encoded array**:
 
 .. code-block:: python
+
    from dragon_inference.dragon_inference import DRAGONModel
 
    # Load some data
@@ -65,5 +65,23 @@ as a general purpose PyTorch CNN wrapper, assuming that the outputs are in the f
    model = DRAGONModel(model_path='<model_path>')
    model.predict(datum=data)
 
+
+Similarly, the Galaxy MCMC class can be initialized similarly.
+
+.. code-block:: python
+
+   from dragon_inference.galaxy_inference import GalaxyInference
+
+   # Load some data
+   header, data = load_fits(file_path='<dummy path>')
+
+   # Initialize an MCMC model with given initial starting parameters.
+   galaxy_mcmc = GalaxyInference(n_steps=10000, n_walkers=20)
+
+   # Initialize params. These are bogus values.
+   galaxy_mcmc.init_params(n=1, r_eff=10, i0=8, theta=0, ellip=0.5)
+
+   # Run MCMC
+   outputs = galaxy_mcmc.fit_radial_light_profile()
 
 For more information, please see the :ref:`documentation` section.
