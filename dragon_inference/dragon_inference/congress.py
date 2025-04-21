@@ -5,18 +5,18 @@ import os
 
 from .model import DRAGONModel
 
-class DRAGONEnsemble:
-    def __init__(self, model_dir):
-        """
-        This is a helper class that helps to initialize our hard voting
-        ensemble of DRAGON models by only specifying the model directory. This
-        can serve as an independent wrapper, in fact, to any ensemble of models
-        that output a discrete number of categories for their final product.
 
-        :param model_dir: A string representing a directory which should contain
-        .pt files of all of the DRAGON models the client wishes to use to make
-        their prediction.
-        """
+class DRAGONEnsemble:
+    """
+    This is a helper class that helps to initialize our hard voting
+    ensemble of DRAGON models by only specifying the model directory. This
+    can serve as an independent wrapper, in fact, to any ensemble of models
+    that output a discrete number of categories for their final product.
+
+    :param model_dir: A string representing a directory which should contain .pt files of all of the DRAGON models the client wishes to use to make their prediction.
+    """
+
+    def __init__(self, model_dir):
         if not os.path.isdir(model_dir):
             raise RuntimeError("Invalid model directory specified.")
 
@@ -42,8 +42,7 @@ class DRAGONEnsemble:
         and second highest most outputted classes for a given model
         and give a weighted confidence.
 
-        :param image: a NumPy ndarray that contains the image data
-        of the FITS file previously downloaded.
+        :param image: a NumPy ndarray that contains the image data of the FITS file previously downloaded.
         :return: The Congressional aggregate data as a dictionary.
         """
         logging.info("Beginning election...")

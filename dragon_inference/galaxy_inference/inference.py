@@ -9,27 +9,31 @@ from multiprocessing import Pool
 
 # Mostly just a wrapper for astropy https://petrofit.readthedocs.io/en/latest/fitting_workflow.html
 class GalaxyInference:
-    def __init__(self, n_steps, n_walkers):
-        """
-        Initialize the GalaxyInference class, that aids with MCMC
-        inference (for a Sersic light profile) for a given 8x8 arcsecond
-        patch of the sky. Accessing this class via the interface is only
-        by specific choice.
+    """
+    Initialize the GalaxyInference class, that aids with MCMC
+    inference (for a Sersic light profile) for a given 8x8 arcsecond
+    patch of the sky. Accessing this class via the interface is only
+    by specific choice.
 
-        :param n_steps: Number of production steps in the MCMC chain.
-        :param n_walkers: Number of walkers in the ensemble.
-        """
+    :param n_steps: Number of production steps in the MCMC chain.
+    :param n_walkers: Number of walkers in the ensemble.
+    """
+    def __init__(self,
+       n_steps: int,
+       n_walkers: int
+    ):
         logging.info("Initializing Galaxy MCMC Inference...")
         self.n_steps = n_steps
         self.n_walkers = n_walkers
 
     def init_params(self,
-                    n: float,
-                    r_eff: float,
-                    i0: float,
-                    theta: int,
-                    ellip: float,
-                    sz: int = 94):
+        n: float,
+        r_eff: float,
+        i0: float,
+        theta: int,
+        ellip: float,
+        sz: int = 94
+    ):
         """
         Initializing the parameters for the MCMC inference
         for a Sersic light profile.
@@ -58,7 +62,9 @@ class GalaxyInference:
         logging.info("Data loaded...")
         self.data = image
 
-    def _curve_model(self, params):
+    def _curve_model(self,
+                     params: [int, float, float, float, float, float, float]
+                     ):
         """
         Convenience (private) method for initializing
         a Sersic model with the parameters: Sersic index,
@@ -179,8 +185,7 @@ class GalaxyInference:
         a galaxy's radial light profile in terms of its
         Sersic index (following a generalized Sersic law).
 
-        :return: The final working state of the MCMC model, and a
-        corner plot that represents its results (pos, prob, state, sample, figure).
+        :return: The final working state of the MCMC model, and a corner plot that represents its results (pos, prob, state, sample, figure).
         """
         logging.info("Beginning fitting...")
         pos, prob, state, sampler = self._run_mcmc()

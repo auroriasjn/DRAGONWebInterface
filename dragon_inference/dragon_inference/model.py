@@ -7,13 +7,13 @@ from utils import discover_devices, arsinh_normalize
 from .cnn import DRAGON
 
 class DRAGONModel:
-    def __init__(self, model_path):
-        """
-        A helper method to initialize a DRAGON model. Basically just a glorified PyTorch
-        model interface.
+    """
+    A helper method to initialize a DRAGON model. Basically just a glorified PyTorch
+    model interface.
 
-        :param model_path: The location of the model to load. All of them are the same anyways!
-        """
+    :param model_path: The location of the model to load. All of them are the same anyways!
+    """
+    def __init__(self, model_path):
         logging.info(f"The model here is located at {model_path}.")
         self.model_path = model_path
 
@@ -33,6 +33,7 @@ class DRAGONModel:
     def predict(self, datum: np.ndarray):
         """
         Predict a label for a single image.
+
         :param datum: A single grayscale image of shape [192, 192] as a numpy array.
         """
         logging.info("Prediction...")
