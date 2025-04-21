@@ -12,42 +12,9 @@
 #
 import os
 import sys
-from unittest import mock
-
-MOCK_MODULES = [
-    'numpy',
-    'scipy',
-    'sklearn',
-    'matplotlib',
-    'matplotlib.pyplot',
-    'scipy.interpolate',
-    'scipy.special',
-    'math',
-    '__future__',
-    'toolboxutilities',
-    'astropy',
-    'astroquery',
-    'cachetools',
-    'click',
-    'corner',
-    'emcee',
-    'mpld3',
-    'pandas',
-    'photutils',
-    'requests',
-    'streamlit',
-    'streamlit_bridge',  # corrected: '-' → '_'
-    'torch',
-    'torchvision',
-    'tqdm',
-    'requests'
-]
-
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.MagicMock()
 
 # Add your project root to sys.path
-sys.path.insert(0, os.path.abspath('../../.'))
+sys.path.insert(0, os.path.abspath('..'))
 
 # Safe to import anything afterward
 from sphinxawesome_theme.postprocess import Icons
