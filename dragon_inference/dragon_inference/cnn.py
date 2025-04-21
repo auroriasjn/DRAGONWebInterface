@@ -1,17 +1,16 @@
 import torch.nn as nn
 
 class DRAGON(nn.Module):
+    """
+    This is the CNN model that was used for the DRAGON training.
+    :param cutout_size: The size of the image, typically 94x94 representing
+    8" by 8" images.
+
+    :param channels: The number of channels of the image. For grayscale, this is 1. For RGB, this is 3.
+
+    :param num_classes: Self-explanatory: the number of classes outputted by the CNN.
+    """
     def __init__(self, cutout_size=94, channels=1, num_classes=6):
-        """
-        This is the CNN model that was used for the DRAGON training.
-        :param cutout_size: The size of the image, typically 94x94 representing
-        8" by 8" images.
-
-        :param channels: The number of channels of the image. For grayscale, this is 1.
-        For RGB, this is 3.
-
-        :param num_classes: Self-explanatory.
-        """
         super(DRAGON, self).__init__()
         self.cutout_size = cutout_size
         self.channels = channels

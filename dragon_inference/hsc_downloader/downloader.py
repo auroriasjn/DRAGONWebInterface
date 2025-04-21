@@ -9,15 +9,15 @@ import logging
 
 
 class HSCDownloader:
-    def __init__(self, user: str, password: str, pwd: Path = Path.cwd()):
-        """
-        This class handles requests and queries to the HSC telescope database.
+    """
+    This class handles requests and queries to the HSC telescope database.
 
-        :param user: The username (for login to HSC).
-        :param password: Password (for login to HSC). Since this is a localized
-        instance, we don't worry about security in this case.
-        :param pwd: The directory in which we want all files to be downloaded.
-        """
+    :param user: The username (for login to HSC).
+    :param password: Password (for login to HSC). Since this is a localized instance, we don't worry about security in this case.
+    :param pwd: The directory in which we want all files to be downloaded.
+    """
+
+    def __init__(self, user: str, password: str, pwd: Path = Path.cwd()):
         self.user = user
         self.password = password
         self.pwd = pwd
