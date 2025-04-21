@@ -36,17 +36,19 @@ MOCK_MODULES = [
     'photutils',
     'requests',
     'streamlit',
-    'streamlit_bridge',
+    'streamlit_bridge',  # corrected: '-' → '_'
     'torch',
     'torchvision',
     'tqdm'
 ]
 
 for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
+    sys.modules[mod_name] = mock.MagicMock()
 
+# Add your project root to sys.path
 sys.path.insert(0, os.path.abspath('../../.'))
 
+# Safe to import anything afterward
 from sphinxawesome_theme.postprocess import Icons
 
 html_permalinks_icon = Icons.permalinks_icon
