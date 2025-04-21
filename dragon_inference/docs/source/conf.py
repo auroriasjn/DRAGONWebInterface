@@ -14,7 +14,7 @@ import os
 import sys
 
 # Add your project root to sys.path
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../../..'))
 
 # Safe to import anything afterward
 from sphinxawesome_theme.postprocess import Icons
