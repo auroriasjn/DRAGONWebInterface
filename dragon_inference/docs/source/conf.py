@@ -12,7 +12,42 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('../../.'))
+
+from unittest import mock
+import sys
+
+MOCK_MODULES = [
+    'numpy',
+    'scipy',
+    'sklearn',
+    'matplotlib',
+    'matplotlib.pyplot',
+    'scipy.interpolate',
+    'scipy.special',
+    'math',
+    '__future__',
+    'toolboxutilities',
+    'astropy',
+    'astroquery',
+    'cachetools',
+    'click',
+    'corner',
+    'emcee',
+    'mpld3',
+    'pandas',
+    'photutils',
+    'requests',
+    'streamlit',
+    'streamlit_bridge',
+    'torch',
+    'torchvision',
+    'tqdm'
+]
+
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
 
 from sphinxawesome_theme.postprocess import Icons
 
