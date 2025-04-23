@@ -72,7 +72,7 @@ autodoc_mock_imports = [
     "pandas", "numpy", "astropy", "astroquery", "cachetools",
     "click", "corner", "emcee", "matplotlib", "mpld3",
     "photutils", "requests", "scipy", "streamlit", "streamlit_bridge", "st_bridge",
-    "torch", "torchvision", "tqdm"
+    "torch", "torchvision", "tqdm", "streamlit_javascript"
 ]
 
 autoclass_content = "both"
