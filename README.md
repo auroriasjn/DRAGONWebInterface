@@ -16,9 +16,9 @@ git clone https://github.com/auroriasjn/DRAGONWebInterface.git
 ```
 Do be warned that since there are 7 separate DRAGON models, this will take up a memory footprint of approximately 193 MB.
 
-Upon installation, please **change directories** into the `dragon_inference` directory:
+Upon installation, please **change directories** into the `DRAGONWebInterface` directory:
 ```angular2html
-cd DRAGONWebInterface/dragon_inference
+cd DRAGONWebInterface
 ```
 Make sure that you have **Anaconda** installed. There are two files located in the folder: `install.sh` and `run.sh`. Please run `install.sh` first and then `run.sh`, where a convenience command is located below.
 ```angular2html
