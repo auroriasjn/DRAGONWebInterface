@@ -168,12 +168,13 @@ class DRAGONDisplay:
             raise RuntimeError("The path of the file entered is invalid. Please try again.")
 
         # Image plotting options
-        st.session_state.fig_size = st.slider('Figure Size (Inches)', min_value=5, max_value=12, value=8, step=1)
-        col1, col2 = st.columns(2)
-        with col1:
-            st.session_state.show_grid = st.checkbox('Show Grid', value=True)
-        with col2:
-            st.session_state.cmap = st.selectbox('Colormap', ('viridis', 'gray_r', 'cividis'))
+        with st.sidebar:
+            st.session_state.fig_size = st.slider('Figure Size (Inches)', min_value=5, max_value=12, value=8, step=1)
+            col1, col2 = st.columns(2)
+            with col1:
+                st.session_state.show_grid = st.checkbox('Show Grid', value=True)
+            with col2:
+                st.session_state.cmap = st.selectbox('Colormap', ('viridis', 'gray_r', 'cividis'))
 
         with st.form("Inference Selector"):
             st.write("You may elect to analyze as a singular galaxy (MCMC fit) "
