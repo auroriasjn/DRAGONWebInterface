@@ -9,6 +9,7 @@ DRAGON
 .. autoclass:: dragon_inference.inference.DRAGONModel
 .. autoclass:: dragon_inference.inference.DRAGON
 .. autoclass:: dragon_inference.inference.DRAGONEnsemble
+.. autoclass:: dragon_inference.inference.DRAGONAnalysis
 
 MCMC
 ----
