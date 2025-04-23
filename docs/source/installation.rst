@@ -54,6 +54,6 @@ where the optional :file:`-e` flag indicates an editable build installation. The
 
 .. code-block:: console
 
-   (.venv) $ streamlit run frontend/frontend.py
+   (.venv) $ streamlit run dragon_inference/frontend/frontend.py
 
 This will create a **Streamlit** *local* web interface for convenience.
