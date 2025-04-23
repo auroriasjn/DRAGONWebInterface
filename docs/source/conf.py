@@ -71,7 +71,7 @@ html_static_path = ['_static']
 autodoc_mock_imports = [
     "pandas", "numpy", "astropy", "astroquery", "cachetools",
     "click", "corner", "emcee", "matplotlib", "mpld3",
-    "photutils", "requests", "scipy", "streamlit", "streamlit_bridge",
+    "photutils", "requests", "scipy", "streamlit", "streamlit_bridge", "st_bridge",
     "torch", "torchvision", "tqdm"
 ]
 
