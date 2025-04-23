@@ -20,6 +20,7 @@ sys.path.insert(0, os.path.abspath("../hsc_downloader"))
 sys.path.insert(0, os.path.abspath("../dragon_analysis"))
 sys.path.insert(0, os.path.abspath("../dragon_inference"))
 sys.path.insert(0, os.path.abspath("../galaxy_inference"))
+sys.path.insert(0, os.path.abspath("../dragon_display"))
 sys.path.insert(0, os.path.abspath("../utils"))
 
 # Safe to import anything afterward
