@@ -1,6 +1,7 @@
-from dragon_inference import DRAGONEnsemble
-from photutils import CircularAperture, CircularAnnulus, aperture_photometry
-from .centroid_point import CentroidPoint
+from dragon_inference.inference import DRAGONEnsemble
+from dragon_inference.dragon_analysis.centroid_point import CentroidPoint
+
+from photutils import CircularAperture, aperture_photometry
 from typing import List
 
 import numpy as np

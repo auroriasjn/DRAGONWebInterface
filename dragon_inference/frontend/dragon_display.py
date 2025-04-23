@@ -1,9 +1,9 @@
-from hsc_downloader import HSCDownloader
-from dragon_analysis import DRAGONAnalysis, CentroidPoint
-from centroid_marker import CentroidMarker
-from galaxy_inference import GalaxyInference
-from utils import go_to_page, go_back
-from utils import load_fits, implot
+from dragon_inference.hsc_downloader import HSCDownloader
+from dragon_inference.dragon_analysis import DRAGONAnalysis, CentroidPoint
+from dragon_inference.frontend.centroid_marker import CentroidMarker
+from dragon_inference.galaxy_inference import GalaxyInference
+from dragon_inference.utils import go_to_page, go_back
+from dragon_inference.utils import load_fits, implot
 
 from pathlib import Path
 from st_bridge import bridge
@@ -229,7 +229,7 @@ class DRAGONDisplay:
                    "and will be saved and **automatically disappear** upon selection of _two_ points.")
 
         # Read CSV without a header
-        labels_df = pd.read_csv("frontend/labels.csv", header=None)
+        labels_df = pd.read_csv("models/labels.csv", header=None)
         labels = dict(zip(labels_df[0], labels_df[1]))
 
         # Unpacking prediction from DRAGON
@@ -355,7 +355,7 @@ class DRAGONDisplay:
                 )
 
         # Unpacking prediction from DRAGON (again)
-        labels_df = pd.read_csv("frontend/labels.csv", header=None)
+        labels_df = pd.read_csv("models/labels.csv", header=None)
         labels = dict(zip(labels_df[0], labels_df[1]))
         pred_class, num_voters, total_voters, avg_confidence = st.session_state["classification"].values()
 

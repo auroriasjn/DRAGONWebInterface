@@ -1,5 +1,6 @@
 .DS_Store
 build
+docs/build
 dragon_inference.egg-info
 .idea
 *.fits
@@ -10,7 +11,7 @@ skeleton.py
 
 # Removing all __pycache__
 dragon_inference/dragon_analysis/__pycache__
-dragon_inference/dragon_inference/__pycache__
+dragon_inference/inference/__pycache__
 dragon_inference/utils/__pycache__
 dragon_inference/galaxy_inference/__pycache__
 dragon_inference/frontend/__pycache__

@@ -1,6 +1,4 @@
 from mpld3.plugins import PluginBase
-from astropy.wcs import WCS
-from dragon_analysis import DRAGONAnalysis
 
 class CentroidMarker(PluginBase):
     """ An interactive widget to add points to a MatplotLib Image rendered by mpld3. """
