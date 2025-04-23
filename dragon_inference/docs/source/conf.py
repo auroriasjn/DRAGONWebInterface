@@ -15,6 +15,12 @@ import sys
 
 # Add your project root to sys.path
 sys.path.insert(0, os.path.abspath('../../..'))
+sys.path.insert(0, os.path.abspath("../frontend"))
+sys.path.insert(0, os.path.abspath("../hsc_downloader"))
+sys.path.insert(0, os.path.abspath("../dragon_analysis"))
+sys.path.insert(0, os.path.abspath("../dragon_inference"))
+sys.path.insert(0, os.path.abspath("../galaxy_inference"))
+sys.path.insert(0, os.path.abspath("../utils"))
 
 # Safe to import anything afterward
 from sphinxawesome_theme.postprocess import Icons
