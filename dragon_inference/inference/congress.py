@@ -3,7 +3,7 @@ from collections import Counter
 import logging
 import os
 
-from .model import DRAGONModel
+from dragon_inference.inference.model import DRAGONModel
 
 
 class DRAGONEnsemble:

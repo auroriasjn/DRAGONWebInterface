@@ -4,4 +4,4 @@
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate DRAGONInference
 
-streamlit run frontend/frontend.py
+streamlit run dragon_inference/frontend/frontend.py

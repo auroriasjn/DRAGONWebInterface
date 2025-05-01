@@ -2,7 +2,6 @@ import requests
 from pathlib import Path
 from astroquery.sdss import SDSS
 from astropy.coordinates import SkyCoord
-from astropy.io import fits
 import io
 import astropy.units as u
 import logging

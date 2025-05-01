@@ -15,13 +15,7 @@ import sys
 
 # Add your project root to sys.path
 sys.path.insert(0, os.path.abspath('../../..'))
-sys.path.insert(0, os.path.abspath("../frontend"))
-sys.path.insert(0, os.path.abspath("../hsc_downloader"))
-sys.path.insert(0, os.path.abspath("../dragon_analysis"))
-sys.path.insert(0, os.path.abspath("../dragon_inference"))
-sys.path.insert(0, os.path.abspath("../galaxy_inference"))
-sys.path.insert(0, os.path.abspath("../dragon_display"))
-sys.path.insert(0, os.path.abspath("../utils"))
+
 
 # Safe to import anything afterward
 from sphinxawesome_theme.postprocess import Icons
@@ -77,8 +71,8 @@ html_static_path = ['_static']
 autodoc_mock_imports = [
     "pandas", "numpy", "astropy", "astroquery", "cachetools",
     "click", "corner", "emcee", "matplotlib", "mpld3",
-    "photutils", "requests", "scipy", "streamlit", "streamlit_bridge",
-    "torch", "torchvision", "tqdm"
+    "photutils", "requests", "scipy", "streamlit", "streamlit_bridge", "st_bridge",
+    "torch", "torchvision", "tqdm", "streamlit_javascript"
 ]
 
 autoclass_content = "both"

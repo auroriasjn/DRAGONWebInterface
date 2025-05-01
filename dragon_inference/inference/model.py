@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 import numpy as np
 import logging
-from utils import discover_devices, arsinh_normalize
 
-from .cnn import DRAGON
+from dragon_inference.utils import discover_devices, arsinh_normalize
+from dragon_inference.inference.cnn import DRAGON
 
 class DRAGONModel:
     """

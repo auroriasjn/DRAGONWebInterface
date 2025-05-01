@@ -19,11 +19,11 @@ This repository can be downloaded by running the following short command:
     will take a memory footprint of approximately **193 MB** of space. Do make sure
     that you have this available.
 
-Upon installation, please **change directories** into the :file:`dragon_inference` directory:
+Upon installation, please **change directories** into the :file:`DRAGONWebInterface` directory:
 
 .. code-block:: console
 
-   (.venv) $ cd DRAGONWebInterface/dragon_inference
+   (.venv) $ cd DRAGONWebInterface
 
 .. note::
 
@@ -54,6 +54,6 @@ where the optional :file:`-e` flag indicates an editable build installation. The
 
 .. code-block:: console
 
-   (.venv) $ streamlit run frontend/frontend.py
+   (.venv) $ streamlit run dragon_inference/frontend/frontend.py
 
 This will create a **Streamlit** *local* web interface for convenience.

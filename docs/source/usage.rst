@@ -42,7 +42,7 @@ to use our Congress Ensemble Package, you can use the following convenience moet
 .. code-block:: python
 
    from dragon_inference.utils import load_fits
-   from dragon_inference.dragon_inference import DRAGONEnsemble
+   from dragon_inference.inference import DRAGONEnsemble
 
    # Acquire data and initialize an ensemble learner.
    header, data = load_fits(file_path='<dummy path>')
@@ -56,7 +56,7 @@ as a general purpose PyTorch CNN wrapper, assuming that the outputs are in the f
 
 .. code-block:: python
 
-   from dragon_inference.dragon_inference import DRAGONModel
+   from dragon_inference.inference import DRAGONModel
 
    # Load some data
    header, data = load_fits(file_path='<dummy path>')
